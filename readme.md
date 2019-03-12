@@ -9,9 +9,9 @@ This flow applies when you either have clear access to a user's credentials (use
 ## Just in time migration
 Just in time migration flow fits when the user's password is not accessible. For example: Passwords are in HASH format. Or when passwords are stored in an identity provider, which you don't have access. Your system validates user credential by calling an identity provider web service.
 
-- [just in time migration v1](jit-migration-v1) - In this sample Azure AD B2C call a REST API that validates the credential, and migrate the account with a Graph API call.
+- [just in time migration v1](jit-migration-v1) - In this sample Azure AD B2C calls a REST API that validates the credential, and migrate the account with a Graph API call.
 
-- [just in time migration v2](jit-migration-v2) - In this sample Azure AD B2C call a REST API to validate the credentials, return the user profile to B2C, while B2C creates the amount in the directory.
+- [just in time migration v2](jit-migration-v2) - In this sample Azure AD B2C calls a REST API to validate the credentials, return the user profile to B2C, while B2C creates the amount in the directory.
 
 
 > **Important!** Just in time migration uses a custom REST API to validate the user's credentials in the legacy identity provider. Make sure your REST API is protected. For example, with **brute-force attack**, an attacker submitting many passwords with the hope of eventually guess the user credentials. On the REST API side, you should lock the account and preventing such attacks.
