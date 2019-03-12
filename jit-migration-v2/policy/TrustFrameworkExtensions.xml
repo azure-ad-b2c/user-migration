@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+  PolicySchemaVersion="0.3.0.0" 
+  TenantId="your-tenant.onmicrosoft.com" 
+  PolicyId="B2C_1A_JITMigraion_TrustFrameworkExtensions" 
+  PublicPolicyUri="http://your-tenant.onmicrosoft.com/B2C_1A_JITMigraion_TrustFrameworkExtensions">
+  
+  <BasePolicy>
+    <TenantId>your-tenant.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_JITMigraion_TrustFrameworkBase</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <!--Demo: This cliam indicates whether the user need to migrate-->
+      <ClaimType Id="needToMigrate">
+        <DisplayName>needToMigrate</DisplayName>
+        <DataType>string</DataType>
+        <AdminHelpText>Indicates whether the user need to migrate</AdminHelpText>
+        <UserHelpText>Indicates whether the user need to migrate</UserHelpText>
+      </ClaimType>
+      <ClaimType Id="useInputPassword">
+        <DisplayName>useInputPassword</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>    
+    </ClaimsSchema>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+    <!-- Local account Sign-Up claims provider -->
+    <ClaimsProvider>
+      <DisplayName>Local Account</DisplayName>
+      <TechnicalProfiles>
+
+        <!-- SIGN-IN -->
+        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+          <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="needToMigrate" />
+          </OutputClaims>  
+          <ValidationTechnicalProfiles>
+            <!--Demo: Add user migration validation technical profile before login-NonInteractive -->
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-SignIn" ContinueOnError="false" />
+            
+            <!--Demo: Run this validation technical profile only if user doesn't need to migrate -->
+            <ValidationTechnicalProfile ReferenceId="login-NonInteractive">
+              <Preconditions>
+                <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+                  <Value>needToMigrate</Value>
+                  <Value>local</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>          
+            </ValidationTechnicalProfile>
+
+            <!--Demo: Run this validation technical profile only if user needs to migrate -->
+            <ValidationTechnicalProfile ReferenceId="AAD-MigrateUserUsingLogonEmail">
+              <Preconditions>
+                <Precondition Type="ClaimEquals" ExecuteActionsIf="false">
+                  <Value>needToMigrate</Value>
+                  <Value>local</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>          
+            </ValidationTechnicalProfile>
+
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+
+        <!-- SIGN-UP -->
+        <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">
+          <Metadata>
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>
+          <ValidationTechnicalProfiles>
+            <!--Demo: Add user migration validation technical profile before AAD-UserWriteUsingLogonEmail -->
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-SignUp" ContinueOnError="false" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" ContinueOnError="false" />
+         </ValidationTechnicalProfiles>  
+        </TechnicalProfile>
+
+        <!-- PASSWORD RESET first page -->
+        <TechnicalProfile Id="LocalAccountDiscoveryUsingEmailAddress">
+          <Metadata>
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>        
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" ContinueOnError="true" />
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-PasswordReset1" ContinueOnError="false" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+
+        <!-- PASSWORD RESET second page -->
+        <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWritePasswordUsingObjectId">
+              <!--Don't run this validation technical profile if objectId is not exists (migrated acccount)-->
+              <Preconditions>
+                <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+                  <Value>objectId</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>
+            </ValidationTechnicalProfile>
+
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-PasswordReset2">
+               <!--Don't run this validation technical profile if objectId is exists (existing acccount)-->
+              <Preconditions>
+                <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                  <Value>objectId</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>
+            </ValidationTechnicalProfile>
+
+            <ValidationTechnicalProfile ReferenceId="AAD-MigrateUserUsingLogonEmail">
+              <!--Don't run this validation technical profile if objectId is exists (existing acccount)-->
+              <Preconditions>
+                <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                  <Value>objectId</Value>
+                  <Action>SkipThisValidationTechnicalProfile</Action>
+                </Precondition>
+              </Preconditions>
+            </ValidationTechnicalProfile>
+
+          </ValidationTechnicalProfiles>        
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+	
+  	<ClaimsProvider>
+	    <DisplayName>REST APIs</DisplayName>
+	    <TechnicalProfiles>
+	
+      <!--Demo: Checks if user exists in the migration table. If yes, validate the credentials and migrate the account --> 
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-SignIn">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/migrate</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="signInName" />
+            <InputClaim ClaimTypeReferenceId="password" />
+            <InputClaim ClaimTypeReferenceId="useInputPassword" DefaultValue="false" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="needToMigrate" />
+            <OutputClaim ClaimTypeReferenceId="email" />
+            <OutputClaim ClaimTypeReferenceId="newPassword" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surName" />
+          </OutputClaims>          
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	      </TechnicalProfile>
+
+        <!--Demo: Checks if user exists in the migration table. If yes, raises an error --> 
+	      <TechnicalProfile Id="REST-UserMigration-LocalAccount-SignUp">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/RaiseErrorIfExists</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName" />
+          </InputClaims>
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	      </TechnicalProfile>
+
+        <!--Demo: Checks if user exists in Azure AD B2C or the migration table. If not, raises an error --> 
+	      <TechnicalProfile Id="REST-UserMigration-LocalAccount-PasswordReset1">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/RaiseErrorIfNotExists</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"  />
+            <InputClaim ClaimTypeReferenceId="objectId" />
+          </InputClaims>
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	      </TechnicalProfile>
+
+	      <TechnicalProfile Id="REST-UserMigration-LocalAccount-PasswordReset2">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/migrate</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName" />
+            <!-- <InputClaim ClaimTypeReferenceId="password" /> -->
+            <InputClaim ClaimTypeReferenceId="useInputPassword" DefaultValue="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="needToMigrate" />
+            <OutputClaim ClaimTypeReferenceId="email" />
+            <!-- Don't return the new password <OutputClaim ClaimTypeReferenceId="newPassword" /> -->
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surName" />
+          </OutputClaims>          
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	      </TechnicalProfile>        
+      </TechnicalProfiles>
+    </ClaimsProvider>
+	
+    <!-- Local account Sign-In claims provider -->
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <!--Demo action required: Change to your ProxyIdentityExperienceFramework App Id-->
+            <Item Key="client_id">00000000-0000-0000-0000-000000000000</Item>
+
+            <!--Demo action required: Change to your IdentityExperienceFramework App Id-->
+            <Item Key="IdTokenAudience">00000000-0000-0000-0000-000000000000</Item>
+          </Metadata>
+          <InputClaims>
+            <!--Demo action required: Change to your ProxyIdentityExperienceFramework App Id-->
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="00000000-0000-0000-0000-000000000000" />
+
+            <!--Demo action required: Change to your IdentityExperienceFramework App Id-->
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="00000000-0000-0000-0000-000000000000" />
+          </InputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <ClaimsProvider>
+      <DisplayName>Azure Active Directory</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AAD-MigrateUserUsingLogonEmail">
+          <Metadata>
+            <Item Key="Operation">Write</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalAlreadyExists">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" Required="true" />
+          </InputClaims>
+          <PersistedClaims>
+            <!-- Required claims -->
+            <PersistedClaim ClaimTypeReferenceId="email" PartnerClaimType="signInNames.emailAddress" />
+            <PersistedClaim ClaimTypeReferenceId="newPassword" PartnerClaimType="password"/>
+            <PersistedClaim ClaimTypeReferenceId="displayName" DefaultValue="unknown" />
+            <PersistedClaim ClaimTypeReferenceId="passwordPolicies" DefaultValue="DisablePasswordExpiration,DisableStrongPassword" />
+  
+            <!-- Optional claims. -->
+            <PersistedClaim ClaimTypeReferenceId="givenName" />
+            <PersistedClaim ClaimTypeReferenceId="surname" />
+          </PersistedClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="newUser" PartnerClaimType="newClaimsPrincipalCreated" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+    <!-- Facebook claims provider -->
+	<ClaimsProvider>
+      <DisplayName>Facebook</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Facebook-OAUTH">
+          <Metadata>
+            <!--Demo action required: Change to your Facebook App Id-->
+            <Item Key="client_id"></Item>
+            <Item Key="scope">email public_profile</Item>
+            <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+
+
+  </ClaimsProviders>
+
+  <!--<UserJourneys>
+  </UserJourneys>-->
+
+</TrustFrameworkPolicy>

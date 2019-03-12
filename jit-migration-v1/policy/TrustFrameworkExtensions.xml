@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+  PolicySchemaVersion="0.3.0.0" 
+  TenantId="sunflowersdemo.onmicrosoft.com" 
+  PolicyId="B2C_1A_JIT_Migration_TrustFrameworkExtensions" 
+  PublicPolicyUri="http://sunflowersdemo.onmicrosoft.com/B2C_1A_JIT_Migration_TrustFrameworkExtensions">
+  
+  <BasePolicy>
+    <TenantId>sunflowersdemo.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_JIT_Migration_TrustFrameworkBase</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+    <!-- Local account Sign-Up claims provider -->
+    <ClaimsProvider>
+      <DisplayName>Local Account</DisplayName>
+      <TechnicalProfiles>
+
+	<TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+	  <ValidationTechnicalProfiles>
+		<!--Demo: Add user migration validation technical profile before login-NonInteractive -->
+		<ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-SignIn" ContinueOnError="false" />
+		<ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
+	  </ValidationTechnicalProfiles>
+	</TechnicalProfile>
+
+        <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">
+          <Metadata>
+            <!--Demo: Disable sign-up email verification-->
+            <!--Action required: Remove in production environment-->
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>
+          <ValidationTechnicalProfiles>
+            <!--Demo: Add user migration validation technical profile before login-NonInteractive -->
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-SignUp" ContinueOnError="false" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWriteUsingLogonEmail" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+        
+        <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
+          <Metadata>
+            <!--Demo: Disable sign-up email verification-->
+            <!--Action required: Remove in production environment-->
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>
+          <OutputClaims>
+            <!-- Required claims -->
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" DefaultValue="localAccountAuthentication" />
+  
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="userPrincipalName" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+          </OutputClaims>          
+          <ValidationTechnicalProfiles>
+            <!--Demo: Add user migration validation technical profile before login-NonInteractive -->
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-PasswordReset" ContinueOnError="false" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWritePasswordUsingObjectId" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserReadUsingEmailAddress" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+
+        <TechnicalProfile Id="LocalAccountDiscoveryUsingEmailAddress">
+          <Metadata>
+            <!--Demo: Disable sign-up email verification-->
+            <!--Action required: Remove in production environment-->
+            <Item Key="EnforceEmailVerification">False</Item>
+          </Metadata>   
+          <ValidationTechnicalProfiles>
+            <!--Demo: Checks if user exists in the migration table or Azure AD -->
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-LoalAccountUserExsist" />
+          </ValidationTechnicalProfiles>       
+        </TechnicalProfile>
+      </TechnicalProfiles>      
+    </ClaimsProvider>
+	
+    <!-- Local account Sign-In claims provider -->
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">988f9a13-7ba4-4261-af75-92b2c32a3652</Item>
+            <Item Key="IdTokenAudience">917ac5bc-e856-45bf-ad6e-281f0c9f55fe</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="988f9a13-7ba4-4261-af75-92b2c32a3652" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="917ac5bc-e856-45bf-ad6e-281f0c9f55fe" />
+          </InputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+
+    <!-- Facebook claims provider -->
+	<ClaimsProvider>
+      <DisplayName>Facebook</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="Facebook-OAUTH">
+          <Metadata>
+            <Item Key="client_id">708931959302288</Item>
+            <Item Key="scope">email public_profile</Item>
+            <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
+          </Metadata>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+	<ClaimsProvider>
+	    <DisplayName>REST APIs</DisplayName>
+	    <TechnicalProfiles>
+	
+      <!--Demo: Checks if user exists in the migration table. If yes, validate the credentials and migrate the account --> 
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-SignIn">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignIn</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="signInName" />
+            <InputClaim ClaimTypeReferenceId="password" />
+          </InputClaims>
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	    </TechnicalProfile>
+
+      <!--Demo: Checks if user exists in the migration table. If yes, return error message 'User name already in use' --> 
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-SignUp">
+	        <DisplayName>Migrate user sign-up flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignUp</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>
+	        </InputClaims>
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	    </TechnicalProfile>
+
+      <!--Demo: Checks if user exists in the migration table. If yes, validate the credentials and migrate the account --> 
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-PasswordReset">
+	        <DisplayName>Migrate user sign-in flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountPasswordReset</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>
+            <InputClaim ClaimTypeReferenceId="newPassword" PartnerClaimType="password" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+          </OutputClaims>          
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	    </TechnicalProfile>
+
+      <!--Demo: Checks if user exists in the migration table or Azure AD --> 
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-LoalAccountUserExsist">
+	        <DisplayName>Migrate user password flow</DisplayName>
+	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+	        <Metadata>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountUserExsist</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+	        </Metadata>
+	        <InputClaims>
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>
+          </InputClaims>
+	        <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+	    </TechnicalProfile>
+	  </TechnicalProfiles>
+	</ClaimsProvider>
+
+
+  </ClaimsProviders>
+
+</TrustFrameworkPolicy>
