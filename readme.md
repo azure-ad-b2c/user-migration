@@ -11,10 +11,11 @@ Just in time migration flow fits when the user's password is not accessible. For
 
 - [just in time migration v1](jit-migration-v1) - In this sample Azure AD B2C calls a REST API that validates the credential, and migrate the account with a Graph API call.
 
-- [just in time migration v2](jit-migration-v2) - In this sample Azure AD B2C calls a REST API to validate the credentials, return the user profile to B2C, while B2C creates the amount in the directory.
+- [just in time migration v2](jit-migration-v2) - In this sample Azure AD B2C calls a REST API to validate the credentials, return the user profile to B2C from an Azure Table, and B2C creates the account in the directory.
 
+- [seamless-account-migration](seamless-account-migration) - Where accounts have been pre-migrated into Azure AD B2C and you want to update the password on the account on initial sign in. Azure AD B2C calls a REST API to validate the credentials for accounts marked as requiring migration (via attribute) against a legacy identity provider, returns a successful response to Azure AD B2C, and Azure AD B2C writes the password to the account in the directory.
 
-> **Important!** Just in time migration uses a custom REST API to validate the user's credentials in the legacy identity provider. Make sure your REST API is protected. For example, with **brute-force attack**, an attacker submitting many passwords with the hope of eventually guess the user credentials. On the REST API side, you should lock the account and preventing such attacks.
+> **Important!** Just in time and seamless migration approaches use a custom REST API to validate the user's credentials against the legacy identity provider. Make sure your REST API is protected against **brute-force attacks**. An attacker may submit many passwords with the hope of eventually guessing the users credentials. On the REST API side, you should stop serving requests for the account to prevent such attacks.
 
 ## Disclaimer
 The migration application is developed and managed by the open-source community in GitHub. The application is not part of Azure AD B2C product and it's not supported under any Microsoft standard support program or service. This migration app is provided AS IS without warranty of any kind.
