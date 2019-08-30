@@ -1,0 +1,32 @@
+﻿{
+  "userType": "emailAddress",
+  "Users": [
+    {
+      // Local account only
+      "signInName": "James@contoso.com",
+      "displayName": "James Martin",
+      "firstName": "James",
+      "lastName": "Martin",
+      "password": "Pass!w0rd"
+    },
+    {
+      // Social account only
+      "issuer": "Facebook.com",
+      "issuerUserId": "1234567890",
+      "email": "sara@live.com",
+      "displayName": "Sara Bell",
+      "firstName": "Sara",
+      "lastName": "Bell"
+    },
+    {
+      // Local & social
+      "signInName": "david@contoso.com",
+      "issuer": "Facebook.com",
+      "issuerUserId": "0987654321",
+      "displayName": "David Hor",
+      "firstName": "David",
+      "lastName": "Hor",
+      "password": "Pass!w0rd"
+    }
+  ]
+}

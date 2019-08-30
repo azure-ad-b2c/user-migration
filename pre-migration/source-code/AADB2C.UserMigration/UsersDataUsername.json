@@ -1,0 +1,13 @@
+﻿{
+  "userType": "userName",
+  "Users": [
+    {
+      "signInName": "James1",
+      "email": "James1@contoso.com",
+      "displayName": "James Davis",
+      "firstName": "James",
+      "lastName": "Davis",
+      "password": "1111"
+    }
+  ]
+}
