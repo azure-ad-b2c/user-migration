@@ -147,6 +147,7 @@
 		<PersistedClaims>
 			<PersistedClaim ClaimTypeReferenceId="objectId" />
 			<PersistedClaim ClaimTypeReferenceId="password" PartnerClaimType="password"/>
+			<PersistedClaim ClaimTypeReferenceId="passwordPolicies" DefaultValue="DisablePasswordExpiration, DisableStrongPassword" AlwaysUseDefaultValue="true"/>/>
 			<PersistedClaim ClaimTypeReferenceId="migrationRequired" PartnerClaimType="extension_requiresMigration"/>
 		</PersistedClaims>
 		<IncludeTechnicalProfile ReferenceId="AAD-Common" />
