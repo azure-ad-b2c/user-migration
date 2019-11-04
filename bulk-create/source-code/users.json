@@ -1,0 +1,53 @@
+{
+   "users": [
+    {
+
+      "displayName": "James Martin (Local account)",
+      "givenName": "James",
+      "surname": "Martin",
+      "identities": [
+        {
+            "signInType": "emailAddress",
+            "issuerAssignedId": "test1@contoso.com"
+        }
+      ],
+      "password": "Pass!w0rd"
+    },
+    {
+
+      "displayName": "TSara Bell (Social)",
+      "givenName": "Sara",
+      "surname": "Bell",      
+      "identities": [
+        {
+            "signInType": "federated",
+            "issuer": "facebook.com",
+            "issuerAssignedId": "0987654321"
+        }],
+      "otherMails": ["sara@live.com"]
+    },
+    {
+
+      "displayName": "David Hor (Local and social)",
+      "givenName": "David",
+      "surname": "Hor",
+      "identities": [
+        {
+            "signInType": "federated",
+            "issuer": "google.com",
+            "issuerAssignedId": "1234567890"
+        },
+        {
+          "signInType": "federated",
+          "issuer": "github.com",
+          "issuerAssignedId": "abcdef"
+        },
+        {
+            "signInType": "emailAddress",
+            "issuerAssignedId": "test2@contoso.com"
+        }
+      ],
+      "password": "Pass!w0rd"
+    }
+  ]
+}
