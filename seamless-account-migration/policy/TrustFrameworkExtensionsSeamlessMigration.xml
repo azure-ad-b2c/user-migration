@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="contoso.onmicrosoft.com" PolicyId="B2C_1A_SeamlessMigration_TrustFrameworkExtensions" PublicPolicyUri="http://contoso.onmicrosoft.com/B2C_1A_SeamlessMigration_TrustFrameworkExtensions">
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="contoso.onmicrosoft.com" 
+  PolicyId="B2C_1A_TrustFrameworkExtensions_SeamlessMigration" 
+  PublicPolicyUri="http://contoso.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions_SeamlessMigration">
 
   <BasePolicy>
     <TenantId>contoso.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_SeamlessMigration_TrustFrameworkBase</PolicyId>
+    <PolicyId>B2C_1A_TrustFrameworkExtensions</PolicyId>
   </BasePolicy>
   <BuildingBlocks>
     <ClaimsSchema>
@@ -34,18 +36,6 @@
     <ClaimsProvider>
       <DisplayName>Local Account SignIn</DisplayName>
       <TechnicalProfiles>
-        <TechnicalProfile Id="login-NonInteractive">
-          <Metadata>
-            <Item Key="client_id">a620b2dd-f55f-44bf-b6de-50689224c47f</Item>
-            <!-- Native App -->
-            <Item Key="IdTokenAudience">58734a70-edde-477e-b758-8fa132745e12</Item>
-            <!-- Web Api -->
-          </Metadata>
-          <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="a620b2dd-f55f-44bf-b6de-50689224c47f" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="58734a70-edde-477e-b758-8fa132745e12" />
-          </InputClaims>
-        </TechnicalProfile>
 
 		<TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
 		<OutputClaims>
@@ -118,6 +108,7 @@
 			<Item Key="ServiceUrl">https://aadtob2cjitmigratepassword.azurewebsites.net/api/identity</Item>
 			<Item Key="AuthenticationType">None</Item>
 			<Item Key="SendClaimsIn">Body</Item>
+			<Item Key="AllowInsecureAuthInProduction">True</Item>
 		</Metadata>
 		<InputClaims>
 			<InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="email" />

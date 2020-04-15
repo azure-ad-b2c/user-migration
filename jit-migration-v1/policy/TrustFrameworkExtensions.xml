@@ -125,6 +125,7 @@
             <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignIn</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="signInName" />
@@ -141,6 +142,7 @@
             <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignUp</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>
@@ -156,6 +158,7 @@
             <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountPasswordReset</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>
@@ -175,6 +178,7 @@
             <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountUserExsist</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"/>

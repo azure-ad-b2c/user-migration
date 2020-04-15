@@ -145,6 +145,7 @@
             <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/migrate</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="signInName" />
@@ -170,6 +171,7 @@
             <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/RaiseErrorIfExists</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName" />
@@ -185,6 +187,7 @@
             <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/RaiseErrorIfNotExists</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName"  />
@@ -200,6 +203,7 @@
             <Item Key="ServiceUrl">http://aadb2cjitusermigrationv2.azurewebsites.net/api/UserMigration/migrate</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">True</Item>
 	        </Metadata>
 	        <InputClaims>
             <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="signInName" />
