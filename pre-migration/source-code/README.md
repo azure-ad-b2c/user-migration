@@ -13,7 +13,7 @@ Azure AD B2C allows you to migrate the uses through [Graph API](https://docs.mic
 * **Just in time migration** - This flow fits when the user's password is not accessible. For example:
     * Passwords are in HASH format
     * Passwords are stored in an identity provider, which you don't have access. Your system validates user credential by calling an identity provider web service.
-    * For more information, see:  [jsut-in-time user migration](just-in-time-migration.ms).
+    * For more information, see:  [just-in-time user migration](just-in-time-migration.ms).
 
 ## Password policy
 The Azure AD B2C password policy for local accounts is based on the policy for Azure AD. Azure AD B2C's sign-up or sign-in and password reset policies uses the "strong" password strength and doesn't expire any passwords. Read the [Azure AD password policy](https://msdn.microsoft.com/library/azure/jj943764.aspx) for more details.
