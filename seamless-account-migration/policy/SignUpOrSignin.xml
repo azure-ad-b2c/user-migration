@@ -10,9 +10,8 @@
 
   <BasePolicy>
     <TenantId>contoso.onmicrosoft.com</TenantId>
-    <PolicyId>B2C_1A_SeamlessMigration_TrustFrameworkExtensions</PolicyId>
+    <PolicyId>B2C_1A_TrustFrameworkExtensions_SeamlessMigration</PolicyId>
   </BasePolicy>
-
   <RelyingParty>
     <DefaultUserJourney ReferenceId="SignUpOrSignIn" />
     <TechnicalProfile Id="PolicyProfile">
@@ -27,7 +26,6 @@
         <OutputClaim ClaimTypeReferenceId="surname" />
         <OutputClaim ClaimTypeReferenceId="email" />
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub"/>
-        <OutputClaim ClaimTypeReferenceId="extension_requiresMigration" />
       </OutputClaims>
       <SubjectNamingInfo ClaimType="sub" />
     </TechnicalProfile>

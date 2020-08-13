@@ -29,10 +29,10 @@ Once the application has been migrated to use Azure AD B2C as the Identity Provi
 The following diagram illustrates the seamless migration flow:
 ![Just in time migration flow Sign In](Media/active-directory-b2c-user-migration-jit/signin.PNG)
 
-## Using Azure AD Graph API to migrate users
+# Using Azure AD Graph API to migrate users
 This section describes the process on how to create user accounts in Azure AD B2C via Azure AD Graph API for the pre-migration stage.
 
-### Register your application in your tenant
+## Register your application in your tenant
 To communicate with the Azure AD Graph API, you first need to have service account with administrative privileges. In Azure AD, you can do this by registering an application and authenticating to Azure AD. The application credentials are: **Application ID** and **Application Secret**. The application acts as itself, not as a user, to call the Graph API.
 
 In this step, you register your migration application in Azure AD. Create application key (Application secret) and set the application with right privileges (write, set password, and delete users).
@@ -41,58 +41,56 @@ In this step, you register your migration application in Azure AD. Create applic
 2. Choose your Azure AD B2C tenant by selecting your account in the top right corner of the page.
 3. From left panel, open the **Azure Active Directory** (not the Azure AD B2C). You might need to select **More Services** to find it.
 4. Select **App registrations**.
-5. Select **New application registration**.
+5. Select **New registration**.
 ![New application registration](Media/active-directory-b2c-user-migration-jit/just-in-time-app-registration.png)
 6. Follow the prompts and create a new application
     * For **Name**, use **B2CUserMigration**.
-    * For **Application type**, use **Web app/API**.
-    * For **Sign-on URL**, use https://localhost (as it's not relevant for this application).
-    * Click **Create**
+    * For **Supported account types**, use **Accounts in this organizational directory only**.
+    * For **Redirect URI**, use type Web: https://localhost (as it's not relevant for this application).
+    * Click **Register**
 7. Once it is created, select the newly created application **B2CUserMigration**.
 Select **Properties**, copy the **Application ID**, and save it for later.
 
-### Create an application secret
-8. Click on **Keys** and add a new key (also known as client secret). Also, copy the key for later.
+## Create an application secret
+1. Click on **Certificates and Secrets** menu and add a new key (also known as client secret). Copy the key for later.
 ![Application ID and Keys](Media/active-directory-b2c-user-migration-jit/just-in-time-app-id-and-key.png)
 
-### Grant administrative permission to your application
-1. Continuing in the Azure portal's **Registered App**
-2. Click on **Required permissions**.
-3. Click on **Windows Azure Active Directory**.
-4. In the **Enable Access**, under **Application Permissions**, select the **Read and write directory data** permission and click **Save**.
-4. Finally, back in the **Required permissions**, click on the **Grant Permissions** button.
+## Grant administrative permission to your application
+1. Click on **API permissions**.
+1. Click on **Add a Permission** -> **Microsoft Graph**.
+1. Select **Application Permissions**, select the **Directory.ReadWrite.All** and **Application.ReadWrite.All** permissions and click **Save**.
+1. Finally, back in the **Application Permissions** menu, click on the **Grant admin Consent** button.
 ![Application permissions](Media/active-directory-b2c-user-migration-jit/just-in-time-app-registration-permissions.png)
 
 You now have an application that has permission to create, read, and update users from your B2C tenant.
 
-## Sample PowerShell script to pre-migrate a user
+# Sample PowerShell script to pre-migrate a user
 The following PowerShell script demonstrates how to: 
-1. Obtain an Access Token to Azure AD Graph API
+1. Obtain an Access Token to Microsoft Graph API
 2. Register the extension attribute named `requiresMigration` into Azure AD B2C - This is later referenced as `extension_requiresMigration` within the Azure AD B2C Custom Policy.
 3. Create a user object in Azure AD B2C
 
 ```PowerShell
 #Part 1 - Obtain an Access Token to Azure AD Graph API
 #AAD B2C tenant
-$tenant = "contoso.onmicrosoft.com"
+$tenant = "b2cprod.onmicrosoft.com"
 #B2CUserMigration Application Registration Application Id
-$ClientID = ""
-#B2CUserMigration Application Registration generated key (client secret)
-$ClientSecret = ""         
+$ClientID      = "" 
+#B2CUserMigration Application Registration generated key (client secret)  
+$ClientSecret  = ""     
 $loginURL = "https://login.microsoftonline.com"
-$resource = "https://graph.windows.net"
+$resource = "https://graph.microsoft.com"
 
 # Get an OAuth 2 access token based on client id, secret and tenant
 $body = @{grant_type="client_credentials";client_id=$ClientID;client_secret=$ClientSecret;resource=$resource}
 $oauth = Invoke-RestMethod -Method Post -Uri $loginURL/$tenant/oauth2/token?api-version=1.0 -Body $body
-```
-```PowerShell
+
 #Part 2 - Register the extension attribute named "requiresMigration" into Azure AD B2C
-#ObjectID of the B2CUserMigration App Registration
+#ObjectID of the b2c-extensions-app App Registration (You will find this in the App Registrations menu)
 $AppObjectID = ""
 
 #Set the endpoint to register extension attributes
-$url = "https://graph.windows.net/$tenant/applications/$AppObjectID/extensionProperties?api-version=1.6"
+$url = "$resource/beta/applications/$AppObjectID/extensionProperties"
 
 #Define the extension attribute
 $body = @"
@@ -109,27 +107,28 @@ $result = Invoke-WebRequest -Headers $authHeader -Uri $url -Method Post -Body $b
 
 #Print the full attribute Name
 ($result.Content | Convertfrom-Json).name
-```
-```PowerShell
+$extName = ($result.Content | Convertfrom-Json).name
+$extName
+
 #Part 3 - Create a user object in Azure AD B2C
 #Populate the user properties
-#Insert the Application Id of the B2CUserMigration App Registration used in Part 2 to register the extension property in the extension name without the dashes in the GUID
+#Example $extName = extension_ce0f3b39c19d415988af620a33887208_requiresMigration
 $body = @"
 {
-  "accountEnabled": true,
-  "creationType": "LocalAccount",
   "displayName": "John Smith",
-  "passwordProfile": {
-    "password": "Test*1234RANDOM!",
-    "forceChangePasswordNextLogin": false
-  },
-  "signInNames": [
+  "identities": [
     {
-      "type": "emailAddress",
-      "value": "j.smith@contoso.com"
+      "signInType": "emailAddress",
+      "issuer": "contoso.onmicrosoft.com",
+      "issuerAssignedId": "jsmith@yahoo.com"
     }
   ],
-  "extension_<B2CUserMigration App Id without dashes>_requiresMigration": true
+  "passwordProfile" : {
+    "password": "Password123!!",
+    "forceChangePasswordNextSignIn": false
+  },
+  "passwordPolicies": "DisablePasswordExpiration",
+  "$extName": true
 }
 "@
 
@@ -137,7 +136,7 @@ $body = @"
 $authHeader = @{"Authorization"= $oauth.access_token;"Content-Type"="application/json";"ContentLength"=$body.length }
 
 #Set the endpoint to make the POST request to
-$url = "https://graph.windows.net/$tenant/users?api-version=1.6"
+$url = "$resource/beta/users"
 
 #Make the POST request with the body to create the user
 Invoke-WebRequest -Headers $authHeader -Uri $url -Method Post -Body $body
