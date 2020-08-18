@@ -11,6 +11,9 @@ Azure AD B2C allows you to pre-create user accounts by using the [Graph API](htt
 
 Using the tools above, read the user accounts from the legacy identity provider and pre-create accounts into Azure AD B2C with random passwords.
 
+We a have pre built tool which can be leveraged to perform user account migration, found [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/manage-user-accounts-graph-api#code-sample-how-to-programmatically-manage-user-accounts).
+Or otherwise, follow the detailed guidance below which explains how to use Microsoft Graph API to migrate accounts.
+
 ### Seamless migration flow during Sign In
 Once the application has been migrated to use Azure AD B2C as the Identity Provider, users who had their accounts migrated will undergo a seamless migration flow with the following logic:
 
