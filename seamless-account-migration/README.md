@@ -29,7 +29,7 @@ Once the application has been migrated to use Azure AD B2C as the Identity Provi
 The following diagram illustrates the seamless migration flow:
 ![Just in time migration flow Sign In](Media/active-directory-b2c-user-migration-jit/signin.PNG)
 
-# Using Azure AD Graph API to migrate users
+# Using Microsoft Graph API to migrate users
 This section describes the process on how to create user accounts in Azure AD B2C via Azure AD Graph API for the pre-migration stage.
 
 ## Register your application in your tenant
