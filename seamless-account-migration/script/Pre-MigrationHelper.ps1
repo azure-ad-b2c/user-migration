@@ -17,7 +17,7 @@ $oauth = Invoke-RestMethod -Method Post -Uri $loginURL/$tenant/oauth2/token?api-
 $AppObjectID = ""
 
 #Set the endpoint to register extension attributes
-$url = "$resource/beta/applications/$AppObjectID/extensionProperties"
+$url = "$resource/v1.0/applications/$AppObjectID/extensionProperties"
 
 #Define the extension attribute
 $body = @"
@@ -63,7 +63,7 @@ $body = @"
 $authHeader = @{"Authorization"= $oauth.access_token;"Content-Type"="application/json";"ContentLength"=$body.length }
 
 #Set the endpoint to make the POST request to
-$url = "$resource/beta/users"
+$url = "$resource/v1.0/users"
 
 #Make the POST request with the body to create the user
 Invoke-WebRequest -Headers $authHeader -Uri $url -Method Post -Body $body
