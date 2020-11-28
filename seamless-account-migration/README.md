@@ -1,5 +1,3 @@
-# A B2C IEF Custom Policy which seamlessly migrates user 
-
 # Azure Active Directory B2C: Seamless user  migration from a Legacy Identity Provider
 When you plan to migrate your users identities to Azure AD B2C, you may also want to migrate the user accounts as well. This article explains how to migrate existing user accounts from a legacy Identity Provider into Azure AD B2C and seamlessly validating and migrating user passwords at initial logon to a Azure AD B2C protected application. This scenario is applicable when passwords in the legacy Identity Provider are stored in a hashed or non-recoverable state.
 
