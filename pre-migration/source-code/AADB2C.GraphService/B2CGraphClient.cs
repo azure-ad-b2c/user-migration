@@ -243,7 +243,7 @@ namespace AADB2C.GraphService
         {
             // If the access token is null or about to be invalid, acquire new one
             if (B2CGraphClient.AccessToken == null ||
-                (B2CGraphClient.AccessToken.ExpiresOn.UtcDateTime > DateTime.UtcNow.AddMinutes(-10)))
+                (B2CGraphClient.AccessToken.ExpiresOn.UtcDateTime < DateTime.UtcNow.AddMinutes(10)))
             {
                 try
                 {
