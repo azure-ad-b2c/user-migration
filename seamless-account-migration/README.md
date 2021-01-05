@@ -430,14 +430,15 @@ Override the `LocalAccountWritePasswordUsingObjectId` Technical Profile as follo
     <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
       <ValidationTechnicalProfiles>
         <ValidationTechnicalProfile ReferenceId="Get-requiresMigration-status-password-reset" ContinueOnError="false" />
-        <ValidationTechnicalProfile ReferenceId="AAD-FlipMigratedFlag" ContinueOnError="false" />
-        <Preconditions>
-          <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
-            <Value>extension_requiresMigration</Value>
-            <Value>False</Value>
-            <Action>SkipThisValidationTechnicalProfile</Action>
-          </Precondition>
-        </Preconditions>
+        <ValidationTechnicalProfile ReferenceId="AAD-FlipMigratedFlag" ContinueOnError="false">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>extension_requiresMigration</Value>
+              <Value>False</Value>
+              <Action>SkipThisValidationTechnicalProfile</Action>
+            </Precondition>
+          </Preconditions>
+         </ValidationTechnicalProfile>
         <ValidationTechnicalProfile ReferenceId="AAD-UserWritePasswordUsingObjectId" />
       </ValidationTechnicalProfiles>
     </TechnicalProfile>
