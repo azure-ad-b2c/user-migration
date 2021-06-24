@@ -15,6 +15,8 @@ Just in time migration flow fits when the user's password is not accessible. For
 
 - [seamless-account-migration](seamless-account-migration) - Where accounts have been pre-migrated into Azure AD B2C and you want to update the password on the account on initial sign in. Azure AD B2C calls a REST API to validate the credentials for accounts marked as requiring migration (via attribute) against a legacy identity provider, returns a successful response to Azure AD B2C, and Azure AD B2C writes the password to the account in the directory.
 
+- [B2C to B2C Migration](/../../../samples/tree/master/policies/B2C2B2CMigration) - Migrate users from one B2C instance to another using just in time migration.
+
 > **Important!** Just in time and seamless migration approaches use a custom REST API to validate the user's credentials against the legacy identity provider. Make sure your REST API is protected against **brute-force attacks**. An attacker may submit many passwords with the hope of eventually guessing the users credentials. On the REST API side, you should stop serving requests for the account to prevent such attacks.
 
 ## Disclaimer
