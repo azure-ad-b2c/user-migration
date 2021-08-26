@@ -36,7 +36,7 @@ namespace Contoso.AADB2C.API.Controllers
                 var tokenEndpoint = @"https://login.windows.net/contoso.onmicrosoft.com/oauth2/token";
                 var accept = "application/json";
                 client.DefaultRequestHeaders.Add("Accept", accept);
-                string postBody = System.String.Format(@"resource=https%3A%2F%2Fgraph.windows.net%2F&client_id=3ce2b90b-9570-4397-a05e-edd06d6d8b65&username={0}&password={1}&scope=openid&grant_type=password", inputClaims.email, HttpContext.Current.Server.UrlEncode(inputClaims.password));
+                string postBody = System.String.Format(@"resource=https%3A%2F%2Fgraph.windows.net%2F&client_id=1950a258-227b-4e31-a9cf-717495945fc2&username={0}&password={1}&scope=openid&grant_type=password", inputClaims.email, HttpContext.Current.Server.UrlEncode(inputClaims.password));
                 using (var response = await client.PostAsync(tokenEndpoint, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded")))
                 {
                     //if the creds auth'd - create the user with graph api into b2c
