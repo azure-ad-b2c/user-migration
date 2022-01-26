@@ -21,8 +21,8 @@ namespace AADB2C.UserMigration.API.Controllers
         private readonly string ClientSecret = ConfigurationManager.AppSettings["b2c:ClientSecret"];
 
         [HttpPost]
-        [Route("api/JITUserMigration/LoalAccountSignIn")]
-        public async Task<IHttpActionResult> LoalAccountSignIn()
+        [Route("api/JITUserMigration/LocalAccountSignIn")]
+        public async Task<IHttpActionResult> LocalAccountSignIn()
         {
             // If not data came in, then return
             if (this.Request.Content == null) throw new Exception();
@@ -112,8 +112,8 @@ namespace AADB2C.UserMigration.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/JITUserMigration/LoalAccountSignUp")]
-        public IHttpActionResult LoalAccountSignUp()
+        [Route("api/JITUserMigration/LocalAccountSignUp")]
+        public IHttpActionResult LocalAccountSignUp()
         {
             // If not data came in, then return
             if (this.Request.Content == null) throw new Exception();
@@ -148,8 +148,8 @@ namespace AADB2C.UserMigration.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/JITUserMigration/LoalAccountPasswordRest")]
-        public async Task<IHttpActionResult> LoalAccountPasswordRest()
+        [Route("api/JITUserMigration/LocalAccountPasswordRest")]
+        public async Task<IHttpActionResult> LocalAccountPasswordRest()
         {
             return null;
         }

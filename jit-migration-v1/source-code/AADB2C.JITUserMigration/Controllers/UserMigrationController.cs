@@ -25,8 +25,8 @@ namespace AADB2C.JITUserMigration.Controllers
             this.AppSettings = appSettings.Value;
         }
 
-        [HttpPost(Name = "LoalAccountSignIn")]
-        public async Task<ActionResult> LoalAccountSignIn()
+        [HttpPost(Name = "LocalAccountSignIn")]
+        public async Task<ActionResult> LocalAccountSignIn()
         {
             string input = null;
 
@@ -112,8 +112,8 @@ namespace AADB2C.JITUserMigration.Controllers
         }
 
 
-        [HttpPost(Name = "LoalAccountSignUp")]
-        public async Task<ActionResult> LoalAccountSignUp()
+        [HttpPost(Name = "LocalAccountSignUp")]
+        public async Task<ActionResult> LocalAccountSignUp()
         {
             string input = null;
 
@@ -166,8 +166,8 @@ namespace AADB2C.JITUserMigration.Controllers
         }
 
 
-        [HttpPost(Name = "LoalAccountUserExsist")]
-        public async Task<ActionResult> LoalAccountUserExsist()
+        [HttpPost(Name = "LocalAccountUserExist")]
+        public async Task<ActionResult> LocalAccountUserExist()
         {
             string input = null;
 
@@ -230,8 +230,8 @@ namespace AADB2C.JITUserMigration.Controllers
 
         }
 
-        [HttpPost(Name = "LoalAccountPasswordReset")]
-        public async Task<ActionResult> LoalAccountPasswordReset()
+        [HttpPost(Name = "LocalAccountPasswordReset")]
+        public async Task<ActionResult> LocalAccountPasswordReset()
         {
             string input = null;
 

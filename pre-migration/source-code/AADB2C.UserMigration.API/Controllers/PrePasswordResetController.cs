@@ -14,8 +14,8 @@ namespace AADB2C.UserMigration.API.Controllers
     public class PrePasswordResetController : ApiController
     {
         [HttpPost]
-        [Route("api/PrePasswordReset/LoalAccountSignIn")]
-        public IHttpActionResult LoalAccountSignIn()
+        [Route("api/PrePasswordReset/LocalAccountSignIn")]
+        public IHttpActionResult LocalAccountSignIn()
         {
             // If not data came in, then return
             if (this.Request.Content == null)
