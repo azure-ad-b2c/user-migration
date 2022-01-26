@@ -75,7 +75,7 @@
           </Metadata>   
           <ValidationTechnicalProfiles>
             <!--Demo: Checks if user exists in the migration table or Azure AD -->
-            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-LoalAccountUserExsist" />
+            <ValidationTechnicalProfile ReferenceId="REST-UserMigration-LocalAccount-LocalAccountUserExist" />
           </ValidationTechnicalProfiles>       
         </TechnicalProfile>
       </TechnicalProfiles>      
@@ -122,7 +122,7 @@
 	        <DisplayName>Migrate user sign-in flow</DisplayName>
 	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	        <Metadata>
-            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignIn</Item>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LocalAccountSignIn</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">True</Item>
@@ -139,7 +139,7 @@
 	        <DisplayName>Migrate user sign-up flow</DisplayName>
 	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	        <Metadata>
-            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountSignUp</Item>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LocalAccountSignUp</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">True</Item>
@@ -155,7 +155,7 @@
 	        <DisplayName>Migrate user sign-in flow</DisplayName>
 	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	        <Metadata>
-            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountPasswordReset</Item>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LocalAccountPasswordReset</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">True</Item>
@@ -171,11 +171,11 @@
 	    </TechnicalProfile>
 
       <!--Demo: Checks if user exists in the migration table or Azure AD --> 
-	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-LoalAccountUserExsist">
+	    <TechnicalProfile Id="REST-UserMigration-LocalAccount-LocalAccountUserExist">
 	        <DisplayName>Migrate user password flow</DisplayName>
 	        <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	        <Metadata>
-            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LoalAccountUserExsist</Item>
+            <Item Key="ServiceUrl">https://aadb2cjitusermigration.azurewebsites.net/api/UserMigration/LocalAccountUserExist</Item>
             <Item Key="AuthenticationType">None</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">True</Item>

@@ -21,8 +21,8 @@ namespace AADB2C.UserMigration.API.Controllers
         private readonly string ClientSecret = ConfigurationManager.AppSettings["b2c:ClientSecret"];
 
         [HttpPost]
-        [Route("api/JITPasswordSet/LoalAccountSignIn")]
-        public async Task<IHttpActionResult> LoalAccountSignIn()
+        [Route("api/JITPasswordSet/LocalAccountSignIn")]
+        public async Task<IHttpActionResult> LocalAccountSignIn()
         {
             // If not data came in, then return
             if (this.Request.Content == null) throw new Exception();
