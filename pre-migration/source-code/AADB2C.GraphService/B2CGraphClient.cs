@@ -120,9 +120,9 @@ namespace AADB2C.GraphService
         public async Task<string> SearcUserBySignInNames(string signInNames)
         {
             var signInNamesEncoded = HttpUtility.UrlEncode(signInNames);
-            return GraphAccounts.Parse(await SendGraphRequest("/users/",
+            return await SendGraphRequest("/users/",
                             $"$filter=signInNames/any(x:x/value eq '{signInNamesEncoded}')",
-                            null, HttpMethod.Get));
+                            null, HttpMethod.Get);
         }
 
         /// <summary>
